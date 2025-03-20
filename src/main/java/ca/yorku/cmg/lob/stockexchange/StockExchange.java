@@ -15,8 +15,7 @@ import ca.yorku.cmg.lob.security.Security;
 import ca.yorku.cmg.lob.security.SecurityList;
 import ca.yorku.cmg.lob.stockexchange.events.NewsBoard;
 import ca.yorku.cmg.lob.stockexchange.tradingagent.TradingAgent;
-import ca.yorku.cmg.lob.stockexchange.tradingagent.TradingAgentAggressive;
-import ca.yorku.cmg.lob.stockexchange.tradingagent.TradingAgentConservative;
+import ca.yorku.cmg.lob.stockexchange.tradingagent.TradingAgentFactory;
 import ca.yorku.cmg.lob.trader.Trader;
 import ca.yorku.cmg.lob.trader.TraderInstitutional;
 import ca.yorku.cmg.lob.trader.TraderRetail;
@@ -156,6 +155,8 @@ public class StockExchange {
 	     * @param path the path to the accounts list file
 	     */
 		public void readAccountsListFromFile(String path) {
+			TradingAgentFactory factory = new TradingAgentFactory();
+
 		    try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 	            String line;
 	            boolean isFirstLine = true; // Skip header
@@ -173,21 +174,21 @@ public class StockExchange {
 	                    long initBalance = Long.parseLong(parts[3].trim());
 	                    String tradingStyle = parts[4].trim();
 	                	Trader t;
-	                    if (traderType.equals("Retail")) {
-	                    	t = new TraderRetail(traderTitle);
-	                    } else {
-	                    	t = new TraderInstitutional(traderTitle);
-	                    }
+
+						if (traderType.equals("Retail")) {
+							t = new TraderRetail(traderTitle);
+						} else {
+							t = new TraderInstitutional(traderTitle);
+						}
 	                    if (accType.equals("Basic")) {
 	                    	accounts.addAccount(new AccountBasic(t,initBalance));
 	                    } else {
 	                    	accounts.addAccount(new AccountPro(t,initBalance));
 	                    }
-	                    if (tradingStyle.equals("Conservative")) {
-	                    	traders.add(new TradingAgentConservative(t,this,newsDesk));
-	                    } else {
-	                    	traders.add(new TradingAgentAggressive(t,this,newsDesk));
-	                    }
+
+						TradingAgent agent = factory.createAgent(traderType, tradingStyle, t, this, newsDesk);
+
+						traders.add(agent);
 	                    
 	                } else {
 	                    System.err.println("Skipping malformed line (two few attributes): " + line);

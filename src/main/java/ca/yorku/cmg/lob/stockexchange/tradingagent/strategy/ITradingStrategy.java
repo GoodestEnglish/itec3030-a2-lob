@@ -1,4 +1,4 @@
-package ca.yorku.cmg.lob.stockexchange.tradingagent;
+package ca.yorku.cmg.lob.stockexchange.tradingagent.strategy;
 
 import ca.yorku.cmg.lob.stockexchange.events.Event;
 

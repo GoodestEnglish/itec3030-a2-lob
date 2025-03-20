@@ -3,6 +3,7 @@ package ca.yorku.cmg.lob.stockexchange.tradingagent;
 import ca.yorku.cmg.lob.stockexchange.StockExchange;
 import ca.yorku.cmg.lob.stockexchange.events.Event;
 import ca.yorku.cmg.lob.stockexchange.events.NewsBoard;
+import ca.yorku.cmg.lob.stockexchange.tradingagent.strategy.ITradingStrategy;
 import ca.yorku.cmg.lob.trader.Trader;
 
 /**
@@ -12,6 +13,7 @@ public abstract class TradingAgent {
 	protected Trader t;
 	protected StockExchange exc;
 	protected NewsBoard news;
+	protected ITradingStrategy strategy;
 	
 	/**
 	 * Constructor
@@ -65,8 +67,24 @@ public abstract class TradingAgent {
 	 * @param price The current price of the relevant ticker. 
 	 */
 	protected abstract void actOnEvent(Event e, int pos, int price);
-	
-	
-	
 
+	public Trader getTrader() {
+		return t;
+	}
+
+	public StockExchange getExchange() {
+		return exc;
+	}
+
+	public NewsBoard getNews() {
+		return news;
+	}
+
+	public ITradingStrategy getStrategy() {
+		return strategy;
+	}
+
+	public void setStrategy(ITradingStrategy strategy) {
+		this.strategy = strategy;
+	}
 }
